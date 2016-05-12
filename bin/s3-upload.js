@@ -20,6 +20,14 @@ const readFile = (filename) =>
   });
 });
 
+const awsS3UploadOptions = {
+  ACL: 'public-read', // Permissions on the uploaded file
+  Body: '', // The file itself to upload
+  Bucket: 'nog-wdi-upload-bucket', // My bucket on AWS
+  ContentType: 'application/octet-stream', // Unencoded binary data
+  Key: 'test/test.bin' // Where it's going in the bucket
+};
+
 // Read file and then...
 readFile(filename)
 .then((data) => console.log(`${filename} is ${data.length} bytes long.`))
