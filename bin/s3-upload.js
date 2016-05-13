@@ -5,8 +5,11 @@ require('dotenv').config();
 const fs = require('fs'); // Filesystem Module
 const fileType = require('file-type'); // FileType Determinant Module
 const awsS3Upload = require('../lib/aws-s3-upload'); // Module for making AWS Uploads
+const mongoose = require('../app/middleware/mongoose'); // Mongoose middleware requires mongoose and configures it
+const Upload = require('../app/models/upload'); // require Upload model
 
 let filename = process.argv[2] || '';
+let title = process.argv[3] || filename.split('/').pop();
 
 // read file, then upload to Amazon S3
 const readFile = (filename) =>
@@ -40,5 +43,14 @@ readFile(filename)
   return file;
 })
 .then(awsS3Upload)
-.then((s3response) => console.log(s3response))
-.catch((err) => console.error(err));
+.then((s3response) => {
+  console.log(`"${title}" uploaded successfully.`);
+  console.log(s3response);
+  let upload = {
+    location: s3response.Location,
+    title: title
+  };
+  return Upload.create(upload);
+})
+.catch((err) => console.error(err))
+.then(() => mongoose.connection.close());
