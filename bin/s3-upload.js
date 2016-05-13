@@ -52,5 +52,6 @@ readFile(filename)
   };
   return Upload.create(upload);
 })
+.then(console.log)
 .catch((err) => console.error(err))
 .then(() => mongoose.connection.close());
